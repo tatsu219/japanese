@@ -7,15 +7,15 @@ import (
 
 const (
 	hira_start  = 0xe38180
-	hira_middle = 0xe381c0
+	hira_middle = 0xe38280
 	hira_end    = 0xe382a0
 	kata_start  = 0xe382a0
-	kata_middle = 0xe382c0
+	kata_middle = 0xe38380
 	kata_end    = 0xe383c0
 
 	shift_width_range  = 0x000020
 	top_shift_width    = kata_start - hira_start
-	middle_shift_width = kata_middle - (kata_start + shift_width_range)
+	middle_shift_width = kata_middle - (hira_start + shift_width_range)
 	bottom_shift_width = (kata_middle + shift_width_range) - hira_middle
 )
 
@@ -40,8 +40,10 @@ func ConvHiraKata(arg string) string {
 			case int_buf < kata_end:
 				int_buf -= bottom_shift_width
 			}
-			fmt.Printf("%x\n", int_buf)
 			buf = utf8.Int2byte(int_buf)
+			fmt.Printf("%x\n", int_buf)
+			utf8.Printbyte(buf)
+			fmt.Printf("%s\n", string(buf))
 		} else {
 			buf = ctx
 		}

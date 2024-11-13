@@ -12,7 +12,7 @@ const (
 
 func Int2byte(arg int) []byte {
 	var byte_count int = 0
-	var buf []byte
+	var result []byte
 	switch {
 	case arg&mask1byte != 0:
 		byte_count = 4
@@ -27,17 +27,21 @@ func Int2byte(arg int) []byte {
 	for i := range byte_count {
 		switch byte_count - i {
 		case 4:
-			buf = append(buf, byte(arg>>(8*(4-1))))
+			buf := byte(arg >> (8 * (4 - 1)))
+			result = append(result, buf)
 		case 3:
-			buf = append(buf, byte((arg&(mask1byte^maskflip))>>8*(3-1)))
+			buf := byte((arg & (mask1byte ^ maskflip)) >> (8 * (3 - 1)))
+			result = append(result, buf)
 		case 2:
-			buf = append(buf, byte((arg&(mask2byte^maskflip))>>8*(2-1)))
+			buf := byte((arg & (mask2byte ^ maskflip)) >> (8 * (2 - 1)))
+			result = append(result, buf)
 		case 1:
-			buf = append(buf, byte((arg&(mask3byte^maskflip))>>8*(1-1)))
+			buf := byte((arg & (mask3byte ^ maskflip)) >> (8 * (1 - 1)))
+			result = append(result, buf)
 		}
 	}
 
-	return buf
+	return result
 }
 
 func Byte2int(arg []byte) int {
