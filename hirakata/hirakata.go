@@ -1,8 +1,8 @@
 package hirakata
 
 import (
+	"../utf8"
 	"fmt"
-	"japanese/utf8"
 )
 
 const (

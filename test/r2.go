@@ -6,7 +6,7 @@ package main
 
 import (
 	"fmt"
-	"japanese/hirakata"
+	"github.com/hasuburero/japanese/hirakata"
 )
 
 func main() {
