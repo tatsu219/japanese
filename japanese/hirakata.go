@@ -1,4 +1,4 @@
-package hirakata
+package japanese
 
 import (
 	"fmt"

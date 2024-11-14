@@ -6,12 +6,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/hasuburero/japanese/hirakata"
+	"github.com/hasuburero/japanese/utf8"
 )
 
 func main() {
 	var test string = "あかさたなハマヤラワ"
-	result := hirakata.ConvHiraKata(test)
+	result := utf8.ConvHiraKata(test)
 	fmt.Println(result)
 	for _, ctx := range []byte(result) {
 		fmt.Printf("%x ", ctx)
