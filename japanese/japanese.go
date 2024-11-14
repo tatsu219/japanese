@@ -36,6 +36,10 @@ func Strcount(arg string, target string) int {
 	return len(slice) - 1
 }
 
+func IndexConbination(arg int) [][]int {
+
+}
+
 func StrconvFirst(arg string, target string, dest string) string {
 	slice := strings.Split(arg, target)
 	length := len(slice)

@@ -3,18 +3,30 @@ package main
 import (
 	"fmt"
 	"github.com/hasuburero/japanese/japanese"
-	"strings"
 )
 
 func main() {
 	input := "ぐらたんはぐらたん"
-	split := "ぐ"
-	buf := strings.Split(input, split)
-	if len(buf) == 1 {
-		fmt.Printf("target does not include %s\n", split)
-		return
-	}
+	target := "ぐ"
+	dest := "が"
+	result := japanese.StrconvAll(input, target, dest)
+	fmt.Println(result)
+	result = japanese.StrconvFirst(input, target, dest)
+	fmt.Println(result)
+	result = japanese.StrconvLast(input, target, dest)
+	fmt.Println(result)
+	result = japanese.StrconvSelect(input, target, dest, []int{2})
+	fmt.Println(result)
+	result = japanese.StrconvSelect(input, target, dest, []int{1, 2})
+	fmt.Println(result)
+	result = japanese.StrconvSelect(input, target, dest, []int{1})
+	fmt.Println(result)
+	result = japanese.StrconvSelect(input, target, dest, []int{0})
+	fmt.Println(result)
 
-	fmt.Println(buf)
+	target = "あ"
+	dest = "い"
+	result = japanese.StrconvAll(input, target, dest)
+	fmt.Println(result)
 	return
 }
