@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	//"github.com/hasuburero/japanese/utf8"
+	"github.com/hasuburero/japanese/japanese"
 	"strings"
 )
 

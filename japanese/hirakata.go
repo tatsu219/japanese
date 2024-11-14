@@ -2,7 +2,7 @@ package japanese
 
 import (
 	"fmt"
-	"github.com/hasuburero/japanese/utf8"
+	//"github.com/hasuburero/japanese/japanese"
 )
 
 const (
@@ -20,11 +20,11 @@ const (
 )
 
 func ConvHiraKata(arg string) string {
-	byte_args := utf8.Splitutf8(arg)
+	byte_args := Splitutf8(arg)
 	var result string = ""
 	for _, ctx := range byte_args {
 		var buf []byte
-		int_buf := utf8.Byte2int(ctx)
+		int_buf := Byte2int(ctx)
 		if hira_start <= int_buf && int_buf < kata_end {
 			switch {
 			case int_buf < hira_start+shift_width_range:
@@ -40,9 +40,9 @@ func ConvHiraKata(arg string) string {
 			case int_buf < kata_end:
 				int_buf -= bottom_shift_width
 			}
-			buf = utf8.Int2byte(int_buf)
+			buf = Int2byte(int_buf)
 			fmt.Printf("%x\n", int_buf)
-			utf8.Printbyte(buf)
+			Printbyte(buf)
 			fmt.Printf("%s\n", string(buf))
 		} else {
 			buf = ctx

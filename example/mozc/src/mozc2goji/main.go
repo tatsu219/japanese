@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"strconv"
-	"github.com/hasuburero/japanese"
+	"github.com/hasuburero/japanese/japanese"
 	"io"
 	"os"
 )
