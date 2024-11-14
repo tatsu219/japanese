@@ -59,6 +59,8 @@ func StrconvLast(arg string, target string, dest string) string {
 	if length < 2 {
 		return arg
 	}
+
+	result := ""
 	for i := 1; i < length; i++ {
 		if i == (length - 1) {
 			result += dest + slice[length-1]
