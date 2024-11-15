@@ -72,7 +72,6 @@ func IndexConbination(arg []int, depth int, width int) ([][]int, error) {
 		}
 	}
 	return result, nil
-
 }
 
 func StrconvFirst(arg string, target string, dest string) string {
