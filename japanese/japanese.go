@@ -32,11 +32,6 @@ func Sort(arg []int) []int {
 	return arg
 }
 
-func Strcount(arg string, target string) int {
-	slice := strings.Split(arg, target)
-	return len(slice) - 1
-}
-
 func IndexConbination(arg []int, depth int, width int) ([][]int, error) {
 	var result [][]int
 	if width == 0 {
@@ -72,6 +67,11 @@ func IndexConbination(arg []int, depth int, width int) ([][]int, error) {
 		}
 	}
 	return result, nil
+}
+
+func Strcount(arg string, target string) int {
+	slice := strings.Split(arg, target)
+	return len(slice) - 1
 }
 
 func StrconvFirst(arg string, target string, dest string) string {

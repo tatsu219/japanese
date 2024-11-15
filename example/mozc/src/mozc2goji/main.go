@@ -33,16 +33,25 @@ type dictionary_format struct {
 	kanji            string
 }
 
-func make_goji(arg string, index int) []string {
+func convertstring(arg string)[]string{
+}
+
+func make_goji(arg string) []string {
 	var result []string
-	var slice1 []string
-	var slice2 []string
+	var conbination [][]int
+	conbination = japanese.IndexConbination([]int, 1, 3)
+	for i:=0; i<len(conbination); i++{
+		slice []string
+		for j:=0; j<len(conbination[i]); j++{
+			index := conbination[i][j] - 1
+		}
+	}
 
 	target := goji_array[index][0]
 	target = goji_array[index][1]
 	index++
 	if index < len(goji_array){
-		for()
+		for
 	}else{
 		result = 
 	}
@@ -96,7 +105,7 @@ func main() {
 			}
 
 			mozc_format := dictionary_format{yomi: buf[0], right_context_id: right_id, left_context_id: left_id, cost: cost, kanji: buf[4]}
-			goji_buf := make_goji(mozc_format.yomi, 0)
+			goji_buf := make_goji(mozc_format.yomi)
 			for _, ctx := range goji_buf {
 				result = append(result, dictionary_format{yomi: ctx, right_context_id: mozc_format.right_context_id, left_context_id: mozc_format.left_context_id, cost: mozc_format.cost, kanji: mozc_format.kanji})
 			}
