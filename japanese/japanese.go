@@ -1,6 +1,7 @@
 package japanese
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 )
@@ -36,7 +37,41 @@ func Strcount(arg string, target string) int {
 	return len(slice) - 1
 }
 
-func IndexConbination(arg int) [][]int {
+func IndexConbination(arg []int, depth int, width int) ([][]int, error) {
+	var result [][]int
+	if width == 0 {
+		err := errors.New("Invalid width value")
+		return [][]int{}, err
+	} else if depth == 0 {
+		err := errors.New("Invalid depth value")
+		return [][]int{}, err
+	}
+	if depth == 1 {
+		for i := 1; i <= width; i++ {
+			buf := []int{i}
+			result = append(result, buf)
+			if (depth + 1) <= width {
+				return_value, err := IndexConbination(buf, depth+1, width)
+				if err != nil {
+					return [][]int{}, err
+				}
+				result = append(result, return_value...)
+			}
+		}
+	} else {
+		for i := arg[depth-1] + 1; i <= width; i++ {
+			buf := append(arg, i)
+			result = append(result, buf)
+			if (depth + 1) <= width {
+				return_value, err := IndexConbination(buf, depth+1, width)
+				if err != nil {
+					return [][]int{}, err
+				}
+				result = append(result, return_value...)
+			}
+		}
+	}
+	return result, nil
 
 }
 
