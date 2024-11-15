@@ -33,7 +33,15 @@ type dictionary_format struct {
 	kanji            string
 }
 
-func convertstring(arg string)[]string{
+func convertstring(arg []string, depth int, width int)[][]string{
+	var result [][]string
+	if width <= 0{
+		err := errors.New("Invalid width value")
+		return [][]string{}, err
+	}else if depth <= 0{
+		err := errors.New("Invalid depth value")
+		return [][]string{}, err
+	}
 }
 
 func make_goji(arg string) []string {
@@ -44,6 +52,9 @@ func make_goji(arg string) []string {
 		slice []string
 		for j:=0; j<len(conbination[i]); j++{
 			index := conbination[i][j] - 1
+			if len(slice) == 0{
+
+			}
 		}
 	}
 

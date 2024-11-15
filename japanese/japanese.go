@@ -34,10 +34,10 @@ func Sort(arg []int) []int {
 
 func IndexConbination(arg []int, depth int, width int) ([][]int, error) {
 	var result [][]int
-	if width == 0 {
+	if width <= 0 {
 		err := errors.New("Invalid width value")
 		return [][]int{}, err
-	} else if depth == 0 {
+	} else if depth <= 0 {
 		err := errors.New("Invalid depth value")
 		return [][]int{}, err
 	}
