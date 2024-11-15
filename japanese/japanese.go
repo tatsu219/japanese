@@ -59,7 +59,7 @@ func IndexConbination(arg []int, depth int, width int) ([][]int, error) {
 			}
 		}
 	} else {
-		for i := arg[depth-1] + 1; i <= width; i++ {
+		for i := arg[depth-2] + 1; i <= width; i++ {
 			buf := append(arg, i)
 			result = append(result, buf)
 			if (depth + 1) <= width {
