@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"github.com/hasuburero/japanese/japanese"
 	"io"
@@ -33,41 +34,43 @@ type dictionary_format struct {
 	kanji            string
 }
 
-func convertstring(arg []string, depth int, width int)[][]string{
-	var result [][]string
-	if width <= 0{
-		err := errors.New("Invalid width value")
-		return [][]string{}, err
-	}else if depth <= 0{
-		err := errors.New("Invalid depth value")
-		return [][]string{}, err
-	}
-}
-
-func make_goji(arg string) []string {
+func convertstring(arg string, depth int, width int) ([]string, error) {
 	var result []string
-	var conbination [][]int
-	conbination = japanese.IndexConbination([]int, 1, 3)
-	for i:=0; i<len(conbination); i++{
-		slice []string
-		for j:=0; j<len(conbination[i]); j++{
-			index := conbination[i][j] - 1
-			if len(slice) == 0{
-
-			}
+	if width <= 0 {
+		err := errors.New("Invalid width value")
+		return []string{}, err
+	} else if depth <= 0 {
+		err := errors.New("Invalid depth value")
+		return []string{}, err
+	}
+	buf := japanese.StrconvAll(arg, goji_array[depth-1][0], goji_array[depth-1][1])
+	goji_count := japanese.Strcount(buf, goji_array[depth-1][1])
+	conbination, err := japanese.IndexConbination([]int, 1, goji_count)
+	if err != nil {
+		return []string, err
+	}
+	if (depth + 1) <= width {
+		return_value, err := convertString(buf, depth+1, width)
+		result = append(result, return_value...)
+	} else {
+		result = append(result, buf)
+	}
+	for i := 0; i < len(conbination); i++ {
+		return_value := japanese.StrconvSelect(buf, goji_array[depth-1][1], goji_array[depth-1][0], conbination[i])
+		if (depth + 1) <= width {
+			return_value = convertString(return_value, depth+1, width)
+			result = append(result, return_value...)
+		} else {
+			result = append(result, return_value)
 		}
 	}
 
-	target := goji_array[index][0]
-	target = goji_array[index][1]
-	index++
-	if index < len(goji_array){
-		for
-	}else{
-		result = 
-	}
-	for i, ctx := range goji_array {
-	}
+	return result, nil
+}
+
+func make_goji(arg string) ([]string, error) {
+	result, err := convertstring(arg, 1, len(goji_array))
+	return result, err
 }
 
 func main() {
@@ -116,7 +119,12 @@ func main() {
 			}
 
 			mozc_format := dictionary_format{yomi: buf[0], right_context_id: right_id, left_context_id: left_id, cost: cost, kanji: buf[4]}
-			goji_buf := make_goji(mozc_format.yomi)
+			goji_buf, err := make_goji(mozc_format.yomi)
+			if err != nil {
+				fmt.Println(err)
+				fmt.Println("make_goji error")
+				return
+			}
 			for _, ctx := range goji_buf {
 				result = append(result, dictionary_format{yomi: ctx, right_context_id: mozc_format.right_context_id, left_context_id: mozc_format.left_context_id, cost: mozc_format.cost, kanji: mozc_format.kanji})
 			}
