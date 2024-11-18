@@ -13,6 +13,8 @@ import (
 const (
 	dictionary_path = "../../mozc-dictionary/"
 	dictionary_name = "dictionary"
+	output_dir      = "../../additional-dictionary/"
+	output_file     = "additional.txt"
 )
 
 const (
@@ -45,12 +47,15 @@ func convertstring(arg string, depth int, width int) ([]string, error) {
 	}
 	buf := japanese.StrconvAll(arg, goji_array[depth-1][0], goji_array[depth-1][1])
 	goji_count := japanese.Strcount(buf, goji_array[depth-1][1])
-	conbination, err := japanese.IndexConbination([]int, 1, goji_count)
+	conbination, err := japanese.IndexConbination([]int{}, 1, goji_count)
 	if err != nil {
-		return []string, err
+		return []string{}, err
 	}
 	if (depth + 1) <= width {
-		return_value, err := convertString(buf, depth+1, width)
+		return_value, err := convertstring(buf, depth+1, width)
+		if err != nil {
+			return []string{}, err
+		}
 		result = append(result, return_value...)
 	} else {
 		result = append(result, buf)
@@ -58,8 +63,11 @@ func convertstring(arg string, depth int, width int) ([]string, error) {
 	for i := 0; i < len(conbination); i++ {
 		return_value := japanese.StrconvSelect(buf, goji_array[depth-1][1], goji_array[depth-1][0], conbination[i])
 		if (depth + 1) <= width {
-			return_value = convertString(return_value, depth+1, width)
-			result = append(result, return_value...)
+			slice, err := convertstring(return_value, depth+1, width)
+			if err != nil {
+				return []string{}, err
+			}
+			result = append(result, slice...)
 		} else {
 			result = append(result, return_value)
 		}
@@ -97,6 +105,10 @@ func main() {
 		}
 
 		slice := strings.Split(string(buf), "\n")
+		if slice[len(slice)-1] == "" {
+			slice = slice[:len(slice)-1]
+		}
+
 		for _, ctx := range slice {
 			buf := strings.Split(ctx, "\t")
 			right_id, err := strconv.Atoi(buf[1])
@@ -129,7 +141,22 @@ func main() {
 				result = append(result, dictionary_format{yomi: ctx, right_context_id: mozc_format.right_context_id, left_context_id: mozc_format.left_context_id, cost: mozc_format.cost, kanji: mozc_format.kanji})
 			}
 		}
+	}
 
+	fd, err := os.Create(output_dir + output_file)
+	if err != nil {
+		fmt.Println(err)
+		fmt.Println("os.Create additional.txt error")
+		return
+	}
+	defer fd.Close()
+
+	for i, ctx := range result {
+		buf := ctx.yomi + "\t" + strconv.Itoa(ctx.right_context_id) + "\t" + strconv.Itoa(ctx.left_context_id) + "\t" + strconv.Itoa(ctx.cost) + "\t" + ctx.kanji
+		fd.Write([]byte(buf))
+		if i != len(result)-1 {
+			buf += "\n"
+		}
 	}
 
 	return
