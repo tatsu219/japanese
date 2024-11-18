@@ -159,8 +159,6 @@ func StrconvSelect(arg string, target string, dest string, index []int) string {
 				result += dest + slice[i]
 				conv_flag = true
 				j++
-			} else {
-				result += target + slice[i]
 			}
 		}
 		if !conv_flag {
