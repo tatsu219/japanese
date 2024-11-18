@@ -15,6 +15,7 @@ const (
 	dictionary_name = "dictionary"
 	output_dir      = "../../additional-dictionary/"
 	output_file     = "additional.txt"
+	dic_range       = 10
 )
 
 const (
@@ -36,7 +37,7 @@ type dictionary_format struct {
 	kanji            string
 }
 
-func convertstring(arg string, depth int, width int) ([]string, error) {
+func convertstring(arg string, original string, depth int, width int) ([]string, error) {
 	var result []string
 	if width <= 0 {
 		err := errors.New("Invalid width value")
@@ -48,22 +49,25 @@ func convertstring(arg string, depth int, width int) ([]string, error) {
 	buf := japanese.StrconvAll(arg, goji_array[depth-1][0], goji_array[depth-1][1])
 	goji_count := japanese.Strcount(buf, goji_array[depth-1][1])
 	conbination, err := japanese.IndexConbination([]int{}, 1, goji_count)
-	if err != nil {
+	if err == errors.New("Invalid depth error") {
 		return []string{}, err
 	}
 	if (depth + 1) <= width {
-		return_value, err := convertstring(buf, depth+1, width)
+		return_value, err := convertstring(buf, original, depth+1, width)
 		if err != nil {
 			return []string{}, err
 		}
 		result = append(result, return_value...)
 	} else {
+		if buf == original {
+			return []string{}, nil
+		}
 		result = append(result, buf)
 	}
 	for i := 0; i < len(conbination); i++ {
 		return_value := japanese.StrconvSelect(buf, goji_array[depth-1][1], goji_array[depth-1][0], conbination[i])
 		if (depth + 1) <= width {
-			slice, err := convertstring(return_value, depth+1, width)
+			slice, err := convertstring(return_value, original, depth+1, width)
 			if err != nil {
 				return []string{}, err
 			}
@@ -77,15 +81,16 @@ func convertstring(arg string, depth int, width int) ([]string, error) {
 }
 
 func make_goji(arg string) ([]string, error) {
-	result, err := convertstring(arg, 1, len(goji_array))
+	result, err := convertstring(arg, arg, 1, len(goji_array))
 	return result, err
 }
 
 func main() {
 	file_index := 0
 	var result []dictionary_format
-	for file_index < 10 {
+	for file_index < dic_range {
 		filename := fmt.Sprintf("%02d", file_index)
+		fmt.Println(filename + ".txt")
 		file_index++
 		filename = dictionary_path + dictionary_name + filename + ".txt"
 		fd, err := os.Open(filename)
@@ -153,10 +158,10 @@ func main() {
 
 	for i, ctx := range result {
 		buf := ctx.yomi + "\t" + strconv.Itoa(ctx.right_context_id) + "\t" + strconv.Itoa(ctx.left_context_id) + "\t" + strconv.Itoa(ctx.cost) + "\t" + ctx.kanji
-		fd.Write([]byte(buf))
 		if i != len(result)-1 {
 			buf += "\n"
 		}
+		fd.Write([]byte(buf))
 	}
 
 	return

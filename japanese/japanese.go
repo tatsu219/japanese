@@ -144,7 +144,6 @@ func StrconvSelect(arg string, target string, dest string, index []int) string {
 	}
 	index = Sort(index)
 	slice := strings.Split(arg, target)
-	fmt.Println(slice)
 	length := len(slice)
 	length_index := len(index)
 	if length < 2 {

@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	input := "ぐらたんはぐらたん"
+	input := "ぐらたんはぐらたんぐ"
 	target := "ぐ"
 	dest := "が"
 	result := japanese.StrconvAll(input, target, dest)
@@ -15,7 +15,7 @@ func main() {
 	fmt.Println(result)
 	result = japanese.StrconvLast(input, target, dest)
 	fmt.Println(result)
-	result = japanese.StrconvSelect(input, target, dest, []int{2})
+	result = japanese.StrconvSelect(input, target, dest, []int{1})
 	fmt.Println(result)
 	result = japanese.StrconvSelect(input, target, dest, []int{1, 2})
 	fmt.Println(result)
