@@ -150,7 +150,7 @@ func StrconvSelect(arg string, target string, dest string, index []int) string {
 		return arg
 	}
 
-	result := ""
+	result := slice[0]
 	for i, j := 1, 0; i < length; i++ {
 		conv_flag := false
 		if j < length_index {
@@ -158,6 +158,8 @@ func StrconvSelect(arg string, target string, dest string, index []int) string {
 				result += dest + slice[i]
 				conv_flag = true
 				j++
+			} else {
+				result += target + slice[i]
 			}
 		}
 		if !conv_flag {
