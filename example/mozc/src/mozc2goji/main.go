@@ -14,7 +14,7 @@ const (
 	dictionary_path = "../../mozc-dictionary/"
 	dictionary_name = "dictionary"
 	output_dir      = "../../additional-dictionary/"
-	output_file     = "additional"
+	output_file     = "additional2"
 	dic_range       = 10
 )
 
@@ -82,10 +82,16 @@ func convertstring(arg string, original string, depth int, width int) ([]string,
 
 func make_goji(arg string) ([]string, error) {
 	result, err := convertstring(arg, arg, 1, len(goji_array))
-	for i, ctx := range result{
-		if ctx == arg{
-			if i==0 && (i+1) < len(result){
-				result = result[]
+	for i, ctx := range result {
+		if ctx == arg {
+			if i == 0 && (i+1) < len(result) {
+				result = result[1:]
+			} else if (i + 1) == len(result) {
+				result = []string{}
+			} else if i != len(result)-1 {
+				result = append(result[:i], result[i+1:]...)
+			} else {
+				result = result[:i]
 			}
 		}
 	}
