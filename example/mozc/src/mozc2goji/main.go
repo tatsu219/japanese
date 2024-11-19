@@ -14,7 +14,7 @@ const (
 	dictionary_path = "../../mozc-dictionary/"
 	dictionary_name = "dictionary"
 	output_dir      = "../../additional-dictionary/"
-	output_file     = "additional.txt"
+	output_file     = "additional"
 	dic_range       = 10
 )
 
@@ -82,6 +82,13 @@ func convertstring(arg string, original string, depth int, width int) ([]string,
 
 func make_goji(arg string) ([]string, error) {
 	result, err := convertstring(arg, arg, 1, len(goji_array))
+	for i, ctx := range result{
+		if ctx == arg{
+			if i==0 && (i+1) < len(result){
+				result = result[]
+			}
+		}
+	}
 	return result, err
 }
 
@@ -148,20 +155,44 @@ func main() {
 		}
 	}
 
-	fd, err := os.Create(output_dir + output_file)
-	if err != nil {
-		fmt.Println(err)
-		fmt.Println("os.Create additional.txt error")
-		return
+	index_start := 0
+	index_end := 0
+	result_length := len(result)
+	if result_length < 100000 {
+		index_end = result_length
+	} else {
+		index_end = 100000
 	}
-	defer fd.Close()
-
-	for i, ctx := range result {
-		buf := ctx.yomi + "\t" + strconv.Itoa(ctx.right_context_id) + "\t" + strconv.Itoa(ctx.left_context_id) + "\t" + strconv.Itoa(ctx.cost) + "\t" + ctx.kanji
-		if i != len(result)-1 {
-			buf += "\n"
+	for file_index := 0; ; file_index++ {
+		file_num := fmt.Sprintf("%02d", file_index)
+		filename := output_dir + output_file + file_num + ".txt"
+		fmt.Println(filename)
+		fd, err := os.Create(filename)
+		if err != nil {
+			fmt.Println(err)
+			fmt.Println("os.Create error")
+			return
 		}
-		fd.Write([]byte(buf))
+		defer fd.Close()
+		result_buf := result[index_start:index_end]
+		for i, ctx := range result_buf {
+			buf := ctx.yomi + "\t" + strconv.Itoa(ctx.right_context_id) + "\t" + strconv.Itoa(ctx.left_context_id) + "\t" + strconv.Itoa(ctx.cost) + "\t" + ctx.kanji
+			if i != len(result_buf)-1 {
+				buf += "\n"
+			}
+			fd.Write([]byte(buf))
+		}
+		if index_end == result_length {
+			break
+		}
+		if index_end < result_length {
+			index_start = index_end
+			if index_end+100000 < result_length {
+				index_end += 100000
+			} else {
+				index_end = result_length
+			}
+		}
 	}
 
 	return
