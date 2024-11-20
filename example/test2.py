@@ -1,6 +1,5 @@
-import os
 import heapq
-from itertools import combinations
+import os
 
 
 def read_mozc_dictionary(mozc_path):
@@ -21,24 +20,10 @@ def read_mozc_dictionary(mozc_path):
     # print(dic)
     return dic
 
-# def all_splits(string):
-    # インデックス位置の全通りを生成
-    splits = []
-    for i in range(1, len(string)):  # 分割点の数
-        for comb in combinations(range(1, len(string)), i):  # 分割点を選ぶ
-            parts = []
-            prev = 0
-            for point in comb:
-                parts.append(string[prev:point])
-                prev = point
-            parts.append(string[prev:])  # 最後の部分
-            splits.append(parts)
-    print(splits)
-    return splits
-
-
-
-def convert_text(text,conversion_dict):
+def find_optimal_path(text, conversion_dict):
+    """
+    ダイクストラ法を用いて、最小コストで漢字変換するパスを見つける。
+    """
     n = len(text)
     dp = [float('inf')] * (n + 1)  # コストを保存
     dp[0] = 0
@@ -78,11 +63,20 @@ def convert_text(text,conversion_dict):
     return ''.join(result[::-1])  # 逆順なのでひっくり返す
 
 
-if __name__ == '__main__':
-    
-    mozc_path = 'mozc/mozc-dictionary'
-    input = 'あしたはあめがふるかのうせいがある'
-    dic = read_mozc_dictionary(mozc_path)
-    # print(all_splits(input))
-    text = convert_text(input, dic)
-    print(text)
+# 辞書ファイルを読み込む
+mozc_dict_path = 'mozc/mozc-dictionary/'  # 辞書ファイルのパス
+mozc_dict = read_mozc_dictionary(mozc_dict_path)
+
+# ひらがなテキストを入力して変換
+with open('jap.txt', 'r', encoding='utf-8') as f:
+    for line in f:
+        input_hiragana = line.strip()
+        converted_text = find_optimal_path(input_hiragana, mozc_dict)
+        print("変換結果:", converted_text)
+
+
+
+# input_hiragana = "あしたあめがふる"
+# converted_text = find_optimal_path(input_hiragana, mozc_dict)
+
+# print("変換結果:", converted_text)
