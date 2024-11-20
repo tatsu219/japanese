@@ -1,14 +1,14 @@
 package main
 
 import (
-	"errors"
+	"bufio"
 	"fmt"
-	"github.com/hasuburero/japanese/japanese"
 	"io"
-	"net/http"
 	"os"
 	"strconv"
 	"strings"
+	//"github.com/hasuburero/japanese/japanese"
+	//"net/http"
 )
 
 const (
@@ -16,8 +16,9 @@ const (
 	mozc_dictionary_name        = "dictionary"
 	mozc_dictionary_count       = 10
 	additional_dictionary_dir   = "../../additional-dictionary/"
-	additional_dictionary_name  = "additinal2"
+	additional_dictionary_name  = "additional2"
 	additional_dictionary_count = 12
+	connection_def              = "connection.txt"
 )
 
 const (
@@ -33,6 +34,7 @@ type mozc_struct struct {
 }
 
 var dictionary map[string][]mozc_struct
+var connection_cost [][]int16
 
 func addDictionary(fd *os.File) error {
 	buf, err := io.ReadAll(fd)
@@ -71,12 +73,91 @@ func readDictionary() error {
 		defer fd.Close()
 
 		addDictionary(fd)
+		if err != nil {
+			return err
+		}
+	}
 
+	for i := range additional_dictionary_count {
+		filename := additional_dictionary_dir + additional_dictionary_name + fmt.Sprintf("%02d", i) + ".txt"
+		fd, err := os.Open(filename)
+		if err != nil {
+			return err
+		}
+		defer fd.Close()
+
+		err = addDictionary(fd)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
 }
 
+func readConnection() error {
+	fd, err := os.Open(mozc_dictionary_dir + connection_def)
+	if err != nil {
+		return err
+	}
+	defer fd.Close()
+
+	content, err := io.ReadAll(fd)
+	if err != nil {
+		return err
+	}
+
+	slice := strings.Split(string(content), "\n")
+	conn_width, err := strconv.Atoi(slice[0])
+	if err != nil {
+		return err
+	}
+	slice = slice[1:]
+
+	height := 0
+	for i, ctx := range slice {
+		i % conn_width
+	}
+
+	return nil
+}
+
+func converter() {
+
+}
+
 func main() {
 	fmt.Println("KKC Server")
+	stdin := bufio.NewScanner(os.Stdin)
+	dictionary = make(map[string][]mozc_struct)
+	err := readDictionary()
+	if err != nil {
+		fmt.Println(err)
+		fmt.Println("readDictionary error")
+		return
+	}
+	for _, dic_ctx := range dictionary {
+		fmt.Println(dic_ctx[0])
+		break
+	}
+
+	err = readConnection()
+	if err != nil {
+		fmt.Println(err)
+		fmt.Println("os.Open error connection_def file")
+		return
+	}
+	defer fd.Close()
+
+	for {
+		stdin.Scan()
+		fmt.Println(stdin.Text())
+
+		fmt.Println(dictionary[stdin.Text()])
+
+		for _, ctx := range stdin.Text() {
+			fmt.Print(ctx)
+			fmt.Printf(" %x\n", ctx)
+		}
+	}
 }
