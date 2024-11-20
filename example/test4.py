@@ -60,6 +60,6 @@ def hiragana_to_kanji(hiragana_sentence, dictionary_dir):
 
 if __name__ == "__main__":
     dictionary_dir = 'mozc/mozc-dictionary'
-    hiragana_sentence = 'ひらがなぶん'
+    hiragana_sentence = 'おおきくなってください'
     kanji_sentence = hiragana_to_kanji(hiragana_sentence, dictionary_dir)
     print(kanji_sentence)

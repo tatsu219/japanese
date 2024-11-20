@@ -17,21 +17,23 @@ def read_mozc_dictionary(mozc_path):
                 if hiragana not in dic:
                     dic[hiragana] = []
                 dic[hiragana].append((kanji, cost))
+    
+    path = 'mozc/additional-dictionary/'
+    
+    files = os.listdir()
+    
     # print(dic)
     return dic
 
 def find_optimal_path(text, conversion_dict):
-    """
-    ダイクストラ法を用いて、最小コストで漢字変換するパスを見つける。
-    """
     n = len(text)
-    dp = [float('inf')] * (n + 1)  # コストを保存
+    dp = [float('inf')] * (n + 1)
     dp[0] = 0
-    prev = [-1] * (n + 1)  # 復元用のインデックス
-    best_candidate = [None] * (n + 1)  # 最適な単語を保存
-    pq = [(0, 0)]  # 優先度キュー (コスト, 現在のインデックス)
+    prev = [-1] * (n + 1) 
+    best_candidate = [None] * (n + 1) 
+    pq = [(0, 0)] 
 
-    max_len = max(len(key) for key in conversion_dict)  # 辞書内の最長の単語長
+    max_len = max(len(key) for key in conversion_dict)
 
     while pq:
         current_cost, index = heapq.heappop(pq)
@@ -50,7 +52,6 @@ def find_optimal_path(text, conversion_dict):
                         best_candidate[next_index] = (candidate, kanji)
                         heapq.heappush(pq, (new_cost, next_index))
 
-    # 漢字列を復元
     result = []
     idx = n
     while idx > 0:
