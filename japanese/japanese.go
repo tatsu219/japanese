@@ -17,6 +17,14 @@ func swap(arg1, arg2 int) (int, int) {
 	return arg2, arg1
 }
 
+func RuneLength(arg string) int {
+	count := 0
+	for _, _ = range arg {
+		count++
+	}
+	return count
+}
+
 func Sort(arg []int) []int {
 	length := len(arg)
 	if length < 2 {
