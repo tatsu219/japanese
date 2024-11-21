@@ -17,6 +17,29 @@ func swap(arg1, arg2 int) (int, int) {
 	return arg2, arg1
 }
 
+func RuneSubstring(arg string, a, b int) (string, error) {
+	var result string = ""
+	var index int = 0
+	arg_length := RuneLength(arg)
+	if a < 0 {
+		return "", errors.New("invalid start index")
+	} else if a == b {
+		return "", errors.New("invalid stop index")
+	} else if b > arg_length {
+		return "", errors.New("out of size arg")
+	}
+	for _, ctx := range arg {
+		if index == b {
+			break
+		} else if index >= a {
+			result += string(ctx)
+		}
+		index++
+	}
+
+	return result, nil
+}
+
 func RuneLength(arg string) int {
 	count := 0
 	for _, _ = range arg {
