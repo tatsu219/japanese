@@ -2,7 +2,7 @@ package main
 
 import (
 	"bufio"
-	"errors"
+	//"errors"
 	"fmt"
 	"github.com/hasuburero/japanese/japanese"
 	"io"
@@ -119,8 +119,12 @@ func readConnection() error {
 	if err != nil {
 		return err
 	}
+	fmt.Printf("%x\n", []byte(content)[len([]byte(content))-1])
 
 	slice := strings.Split(string(content), "\n")
+	if slice[len(slice)-1] == "" {
+		slice = slice[:len(slice)-1]
+	}
 	width, err := strconv.Atoi(slice[0])
 	if err != nil {
 		return err
@@ -215,11 +219,12 @@ func converter(arg string) (string, error) {
 			if err != nil {
 				return "", err
 			}
+			fmt.Println(tango)
 			mozc_array, exists, err := searchTango(tango)
 			if err != nil {
 				return "", err
 			} else if !exists {
-				return "", errors.New("")
+				continue
 			}
 			for _, ctx := range mozc_array {
 				tango_array = append(tango_array, node_struct{ctx, i, j})
@@ -229,6 +234,7 @@ func converter(arg string) (string, error) {
 
 	tango_array_length := len(tango_array)
 	node_list := make([][]int, tango_array_length+2)
+	fmt.Println(len(connection_cost))
 	for i := range tango_array_length + 2 {
 		node_list[i] = make([]int, tango_array_length+2)
 	}
@@ -245,6 +251,8 @@ func converter(arg string) (string, error) {
 		}
 		for j := 0; j < len(tango_array); j++ {
 			if tango_array[j].start == ctx.end {
+				fmt.Println(tango_array[j].mozc.left_context_id)
+				fmt.Println(tango_array[j].mozc.right_context_id)
 				cost := connection_cost[ctx.mozc.right_context_id][tango_array[j].mozc.left_context_id] + tango_array[j].mozc.cost
 				node_list[i+1][j+1] = cost
 			}
@@ -284,13 +292,13 @@ func main() {
 
 	for {
 		stdin.Scan()
-		fmt.Println(stdin.Text())
 
-		fmt.Println(dictionary[stdin.Text()])
-
-		for _, ctx := range stdin.Text() {
-			fmt.Print(ctx)
-			fmt.Printf(" %x\n", ctx)
+		result, err := converter(stdin.Text())
+		if err != nil {
+			fmt.Println(err)
+			fmt.Println("kana kanji converter error")
+			return
 		}
+		fmt.Println(result)
 	}
 }
