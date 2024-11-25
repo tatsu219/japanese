@@ -111,7 +111,7 @@ func StrconvFirst(arg string, target string, dest string) string {
 	if length < 2 {
 		return arg
 	}
-	result := ""
+	result := slice[0]
 	for i := 1; i < length; i++ {
 		if i == 1 {
 			result += dest + slice[i]
