@@ -2,14 +2,18 @@ package main
 
 import (
 	"bufio"
-	//"errors"
 	"fmt"
 	"github.com/hasuburero/japanese/japanese"
 	"io"
 	"os"
 	"strconv"
 	"strings"
+	//"errors"
 	//"net/http"
+)
+
+const (
+	example = "きょうのてんきはいいですね"
 )
 
 const (
@@ -119,7 +123,6 @@ func readConnection() error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("%x\n", []byte(content)[len([]byte(content))-1])
 
 	slice := strings.Split(string(content), "\n")
 	if slice[len(slice)-1] == "" {
@@ -140,7 +143,7 @@ func readConnection() error {
 		}
 		connection_cost[height] = append(connection_cost[height], int(buf))
 
-		if i%width == width {
+		if i%width == 0 && i != len(slice)-1 && i != 0 {
 			connection_cost = append(connection_cost, []int{})
 			height++
 		}
@@ -168,7 +171,6 @@ func reverseArray(arg []int, index int) []int {
 func dijkstra(node_list [][]int) []int {
 	node_size := len(node_list)
 	var node_buf []int
-	//checkpoint
 	var node []node_info = make([]node_info, node_size)
 
 	for i, ctx := range node_list[0] {
@@ -219,7 +221,6 @@ func converter(arg string) (string, error) {
 			if err != nil {
 				return "", err
 			}
-			fmt.Println(tango)
 			mozc_array, exists, err := searchTango(tango)
 			if err != nil {
 				return "", err
@@ -232,18 +233,19 @@ func converter(arg string) (string, error) {
 		}
 	}
 
+	fmt.Println(tango_array)
 	tango_array_length := len(tango_array)
 	node_list := make([][]int, tango_array_length+2)
-	fmt.Println(len(connection_cost))
 	for i := range tango_array_length + 2 {
 		node_list[i] = make([]int, tango_array_length+2)
 	}
 	for i, ctx := range tango_array {
-		if ctx.start == 1 {
+		if ctx.start == 0 {
 			cost := connection_cost[0][ctx.mozc.left_context_id] + ctx.mozc.cost
 			node_list[0][i+1] = cost
 		}
 	}
+
 	for i, ctx := range tango_array {
 		if ctx.end == arg_length {
 			node_list[i+1][len(tango_array)+1] = -1
@@ -251,8 +253,6 @@ func converter(arg string) (string, error) {
 		}
 		for j := 0; j < len(tango_array); j++ {
 			if tango_array[j].start == ctx.end {
-				fmt.Println(tango_array[j].mozc.left_context_id)
-				fmt.Println(tango_array[j].mozc.right_context_id)
 				cost := connection_cost[ctx.mozc.right_context_id][tango_array[j].mozc.left_context_id] + tango_array[j].mozc.cost
 				node_list[i+1][j+1] = cost
 			}
@@ -261,6 +261,7 @@ func converter(arg string) (string, error) {
 
 	node_buf := dijkstra(node_list)
 	var result string = ""
+	//var info
 	for i := 1; i < len(node_buf); i++ {
 		result += tango_array[node_buf[i]-1].mozc.kanji
 	}
@@ -270,7 +271,6 @@ func converter(arg string) (string, error) {
 
 func main() {
 	fmt.Println("KKC Server")
-	stdin := bufio.NewScanner(os.Stdin)
 	dictionary = make(map[string][]mozc_struct)
 	err := readDictionary()
 	if err != nil {
@@ -278,10 +278,7 @@ func main() {
 		fmt.Println("readDictionary error")
 		return
 	}
-	for _, dic_ctx := range dictionary {
-		fmt.Println(dic_ctx[0])
-		break
-	}
+	fmt.Println("end of reading dictionary")
 
 	err = readConnection()
 	if err != nil {
@@ -289,7 +286,16 @@ func main() {
 		fmt.Println("os.Open error connection_def file")
 		return
 	}
+	fmt.Println("end of connection file")
 
+	//result, err := converter(example)
+	//if err != nil {
+	//	fmt.Println(err)
+	//	fmt.Println("kana kanji converter error")
+	//}
+	//fmt.Println(result)
+	//return
+	stdin := bufio.NewScanner(os.Stdin)
 	for {
 		stdin.Scan()
 
