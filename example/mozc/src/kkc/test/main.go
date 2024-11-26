@@ -12,8 +12,8 @@ import (
 )
 
 const (
-	dataset_dir   = "../dataset/"
-	dataset_name  = "dataset"
+	dataset_dir   = "../data/"
+	dataset_name  = "data"
 	dataset_count = 2
 )
 
