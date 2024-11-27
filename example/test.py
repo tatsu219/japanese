@@ -65,7 +65,7 @@ def convert_text(text,conversion_dict):
 if __name__ == '__main__':
     
     mozc_path = 'mozc/mozc-dictionary'
-    input = 'あしたはあめがふるかのうせいがある'
+    input = 'うま'
     dic = read_mozc_dictionary(mozc_path)
     # print(all_splits(input))
     text = convert_text(input, dic)
